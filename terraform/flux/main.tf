@@ -1,7 +1,7 @@
 locals {
   github_org        = "mpeters0n"
-  github_token      = "b6f4ed3548902c59c3408d0f110ab0241e339f4d"
-#  github_token      = "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"
+  # Must have ability to add ssh key
+  github_token      = "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"
   github_repository = "flagger-poc"
 }
 
