@@ -1,0 +1,27 @@
+#
+# This can be modularized in terraform
+#
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: example
+  namespace: mpeterson
+spec:
+  interval: 30s
+  url: https://github.com/mpeters0n/flagger-poc/terraform/example
+  ref:
+    branch: main
+---
+apiVersion: infra.contrib.fluxcd.io/v1alpha2
+kind: Terraform
+metadata:
+  name: example
+  namespace: mpeterson
+spec:
+  interval: 1m
+  approvePlan: auto
+  path: ./
+  sourceRef:
+    kind: GitRepository
+    name: example
+    namespace: mpeterson
