@@ -8,17 +8,16 @@ provider "kubernetes" {
   config_path = "/home/mpeterson/kind.kubeconfig"
 }
 
-#resource "kubernetes_namespace" "this" {
-#  metadata {
-#    name = "example"
-#  }
-#}
+resource "kubernetes_namespace" "this" {
+  metadata {
+    name = "example"
+  }
+}
 
 resource "kubernetes_deployment" "this" {
   metadata {
     name      = local.app_name
-#    namespace = kubernetes_namespace.this.metadata.0.name
-    namespace = "example"
+    namespace = kubernetes_namespace.this.metadata.0.name
   }
 
   spec {
