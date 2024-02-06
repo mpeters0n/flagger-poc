@@ -5,7 +5,7 @@ apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
 metadata:
   name: example
-  namespace: mpeterson
+  namespace: flux-system
 spec:
   interval: 30s
   url: https://github.com/mpeters0n/flagger-poc/terraform/example
@@ -16,7 +16,7 @@ apiVersion: infra.contrib.fluxcd.io/v1alpha2
 kind: Terraform
 metadata:
   name: example
-  namespace: mpeterson
+  namespace: flux-system
 spec:
   interval: 1m
   approvePlan: auto
@@ -24,4 +24,4 @@ spec:
   sourceRef:
     kind: GitRepository
     name: example
-    namespace: mpeterson
+    namespace: flux-system
