@@ -8,9 +8,11 @@ metadata:
   namespace: flux-system
 spec:
   interval: 30s
-  url: https://github.com/mpeters0n/flagger-poc
   ref:
     branch: main
+  secretRef:
+    name: flux-system
+  url: ssh://git@github.com/mpeters0n/flagger-poc
 ---
 apiVersion: infra.contrib.fluxcd.io/v1alpha2
 kind: Terraform
