@@ -25,6 +25,7 @@ resource "github_repository_deploy_key" "this" {
 
 provider "kind" {}
 
+# This creates a cluster and needs to be removed
 resource "kind_cluster" "this" {
   name = "kind-kind"
 }
