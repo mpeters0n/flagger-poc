@@ -5,8 +5,7 @@ locals {
 }
 
 provider "kubernetes" {
-  config_path = "./kind.kubeconfig"
-  host        = "https://127.0.0.1:45351"
+  config_path = "/home/mpeterson/kind.kubeconfig"
 }
 
 resource "kubernetes_namespace" "this" {
