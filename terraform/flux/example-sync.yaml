@@ -8,7 +8,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 30s
-  url: https://github.com/mpeters0n/flagger-poc/terraform/example
+  url: https://github.com/mpeters0n/flagger-poc
   ref:
     branch: main
 ---
@@ -20,7 +20,7 @@ metadata:
 spec:
   interval: 1m
   approvePlan: auto
-  path: ./
+  path: ./terraform/example
   sourceRef:
     kind: GitRepository
     name: example
