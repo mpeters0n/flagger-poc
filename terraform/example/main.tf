@@ -5,7 +5,7 @@ locals {
 }
 
 provider "kubernetes" {
-  config_path = "/home/mpeterson/kind.kubeconfig"
+  config_path = "./kind.kubeconfig"
 }
 
 resource "kubernetes_namespace" "this" {
