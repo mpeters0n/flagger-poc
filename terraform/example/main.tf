@@ -5,10 +5,10 @@ locals {
 }
 
 provider "kubernetes" {
-#  config_path    = "/home/mpeterson/kind.kubeconfig"
-#  config_context = "kind"
+  config_path    = "/home/mpeterson/kind.kubeconfig"
+  config_context = "kind"
   host = "https://127.0.0.1:45351"
-  cluster_ca_certificate = "/home/mpeterson/kind_ca.pem"
+#  cluster_ca_certificate = "/home/mpeterson/kind_ca.pem"
 }
 
 resource "kubernetes_namespace" "this" {
