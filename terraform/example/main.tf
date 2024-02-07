@@ -5,9 +5,9 @@ locals {
 }
 
 provider "kubernetes" {
-#  config_path    = "/home/mpeterson/kind.kubeconfig"
+  config_path    = "${file("/home/mpeterson/kind.kubeconfig")}"
 #  config_context = "kind"
-  host = "https://127.0.0.1:45351"
+#  host = "https://127.0.0.1:45351"
 #  cluster_ca_certificate = "/home/mpeterson/kind_ca.pem"
 }
 
