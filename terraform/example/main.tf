@@ -16,6 +16,11 @@ provider "kubernetes" {
 resource "kubernetes_namespace" "this" {
   metadata {
     name = "example"
+
+    # Enable the addition of the Envoy controller
+    labels = {
+      istio-injection = "enabled"
+    }
   }
 }
 
@@ -23,7 +28,6 @@ resource "kubernetes_deployment" "this" {
   metadata {
     name      = local.app_name
     namespace = kubernetes_namespace.this.metadata.0.name
-#    namespace = "flux-system"
   }
 
   spec {
@@ -39,6 +43,8 @@ resource "kubernetes_deployment" "this" {
       metadata {
         labels = {
           "app.kubernetes.io/name" = local.app_name
+          # Required for istio/kiali visualization
+          "app" = local.app_name
         }
       }
       spec {
@@ -70,6 +76,10 @@ resource "kubernetes_deployment" "this" {
 
             initial_delay_seconds = 3
             period_seconds        = 3
+          }
+          env {
+            name = "RESTART"
+            value = "1"
           }
         }
       }
