@@ -77,7 +77,7 @@ resource "kubernetes_deployment" "this" {
           }
           env {
             name = "RESTART"
-            value = "1"
+            value = "3"
           }
           port {
             name           = "example"
