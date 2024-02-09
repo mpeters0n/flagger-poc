@@ -66,7 +66,7 @@ resource "kubernetes_deployment" "this" {
           liveness_probe {
             http_get {
               path = "/"
-              port = 80
+              port = 8080
 
               http_header {
                 name  = "X-Custom-Header"
@@ -86,3 +86,58 @@ resource "kubernetes_deployment" "this" {
     }
   }
 }
+
+resource "kubernetes_service" "this" {
+  metadata {
+    name      = local.app_name
+    namespace = kubernetes_namespace.this.metadata.0.name
+  }
+  spec {
+    selector = {
+      "app.kubernetes.io/name" = local.app_name
+    }
+    port {
+      name        = "example"
+      port        = 8080
+      target_port = "example"
+    }
+  }
+
+  depends_on = [ kubernetes_deployment.this ]
+}
+
+resource "kubernetes_ingress_v1" "this" {
+  wait_for_load_balancer = true
+
+  metadata {
+    name        = local.app_name
+    namespace   = kubernetes_namespace.this.metadata.0.name
+    annotations = {
+      "kubernetes.io/ingress.class" = "alb"
+      "alb.ingress.kubernetes.io/listen-ports" = "[{\"HTTP\": 80}]"
+      "alb.ingress.kubernetes.io/target-type" = "ip"
+      "alb.ingress.kubernetes.io/ip-address-type" = "ipv4"
+      "alb.ingress.kubernetes.io/healthcheck-path" = "/"
+    }
+  }
+  spec {
+    rule {
+      # Whitelist accepted endpoints 
+      http {
+        path {
+          path = "/"
+          backend {
+            service {
+              name = kubernetes_service.this.metadata[0].name
+              port {
+                number = 8080
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  depends_on = [ kubernetes_service.this ]
+}
+
