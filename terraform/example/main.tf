@@ -81,6 +81,10 @@ resource "kubernetes_deployment" "this" {
             name = "RESTART"
             value = "1"
           }
+          port {
+            name = "example"
+            container_port = 8080
+          }
         }
       }
     }
