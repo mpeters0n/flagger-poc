@@ -64,7 +64,7 @@ resource "kubernetes_deployment" "this" {
           liveness_probe {
             http_get {
               path = "/"
-              port = 8080
+              port = 80
 
               http_header {
                 name  = "X-Custom-Header"
@@ -82,7 +82,7 @@ resource "kubernetes_deployment" "this" {
           port {
             name           = "example"
             container_port = 80
-            host_port      = 8080
+            host_port      = 80
           }
         }
       }
@@ -101,7 +101,7 @@ resource "kubernetes_service" "this" {
     }
     port {
       name        = "example"
-      port        = 8080
+      port        = 80
       target_port = "example"
     }
   }
@@ -117,7 +117,7 @@ resource "kubernetes_ingress_v1" "this" {
     namespace   = kubernetes_namespace.this.metadata.0.name
     annotations = {
       "kubernetes.io/ingress.class" = "alb"
-      "alb.ingress.kubernetes.io/listen-ports" = "[{\"HTTP\": 80}]"
+      "alb.ingress.kubernetes.io/listen-ports" = "[{\"HTTP\": 8080}]"
       "alb.ingress.kubernetes.io/target-type" = "ip"
       "alb.ingress.kubernetes.io/ip-address-type" = "ipv4"
       "alb.ingress.kubernetes.io/healthcheck-path" = "/"
@@ -133,7 +133,7 @@ resource "kubernetes_ingress_v1" "this" {
             service {
               name = kubernetes_service.this.metadata[0].name
               port {
-                number = 8080
+                number = 80
               }
             }
           }
