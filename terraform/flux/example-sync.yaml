@@ -1,29 +1,29 @@
 #
 # This can be modularized in terraform
 #
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: example
-  namespace: flux-system
-spec:
-  interval: 30s
-  ref:
-    branch: main
-  secretRef:
-    name: flux-system
-  url: ssh://git@github.com/mpeters0n/flagger-poc
----
-apiVersion: infra.contrib.fluxcd.io/v1alpha2
-kind: Terraform
-metadata:
-  name: example
-  namespace: flux-system
-spec:
-  interval: 1m
-  approvePlan: auto
-  path: ./terraform/example
-  sourceRef:
-    kind: GitRepository
-    name: example
-    namespace: flux-system
+#apiVersion: source.toolkit.fluxcd.io/v1
+#kind: GitRepository
+#metadata:
+#  name: example
+##  namespace: flux-system
+#spec:
+#  interval: 30s
+#  ref:
+#    branch: main
+#  secretRef:
+#    name: flux-system
+#  url: ssh://git@github.com/mpeters0n/flagger-poc
+#---
+#apiVersion: infra.contrib.fluxcd.io/v1alpha2
+#kind: Terraform
+#metadata:
+#  name: example
+#  namespace: flux-system
+#spec:
+#  interval: 1m
+#  approvePlan: auto
+#  path: ./terraform/example
+#  sourceRef:
+#    kind: GitRepository
+#    name: example
+#    namespace: flux-system
