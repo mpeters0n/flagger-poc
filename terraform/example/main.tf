@@ -28,6 +28,10 @@ resource "kubernetes_deployment" "this" {
     namespace = kubernetes_namespace.this.metadata.0.name
   }
 
+  timeouts {
+    create = "3m"
+  }
+
   spec {
     replicas = 1
 
@@ -47,8 +51,9 @@ resource "kubernetes_deployment" "this" {
       }
       spec {
         container {
-          image = "nginx:1.21.6"
-          name  = "example"
+          image = "hashicorp/http-echo:0.2.3"
+          name  = "local-example"
+          args = [ "-text=foo" ]
 
           resources {
             limits = {
@@ -61,28 +66,9 @@ resource "kubernetes_deployment" "this" {
             }
           }
 
-          liveness_probe {
-            http_get {
-              path = "/"
-              port = 80
-
-              http_header {
-                name  = "X-Custom-Header"
-                value = "Awesome"
-              }
-            }
-
-            initial_delay_seconds = 3
-            period_seconds        = 3
-          }
           env {
             name = "RESTART"
-            value = "2"
-          }
-          port {
-            name           = "example"
-            container_port = 80
-            host_port      = 80
+            value = "1"
           }
         }
       }
@@ -100,48 +86,11 @@ resource "kubernetes_service" "this" {
       "app.kubernetes.io/name" = local.app_name
     }
     port {
-      name        = "example"
-      port        = 80
-      target_port = "example"
+      name        = "http-local-example"
+      port        = 8080
+      target_port = 5678
     }
-  }
 
-  depends_on = [ kubernetes_deployment.this ]
+    type = "LoadBalancer"
+  }
 }
-
-resource "kubernetes_ingress_v1" "this" {
-  wait_for_load_balancer = true
-
-  metadata {
-    name        = local.app_name
-    namespace   = kubernetes_namespace.this.metadata.0.name
-    annotations = {
-      "kubernetes.io/ingress.class" = "alb"
-      "alb.ingress.kubernetes.io/listen-ports" = "[{\"HTTP\": 80}]"
-      "alb.ingress.kubernetes.io/target-type" = "ip"
-      "alb.ingress.kubernetes.io/ip-address-type" = "ipv4"
-      "alb.ingress.kubernetes.io/healthcheck-path" = "/"
-    }
-  }
-  spec {
-    rule {
-      # Whitelist accepted endpoints 
-      http {
-        path {
-          path = "/"
-          backend {
-            service {
-              name = kubernetes_service.this.metadata[0].name
-              port {
-                number = 80
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  depends_on = [ kubernetes_service.this ]
-}
-
