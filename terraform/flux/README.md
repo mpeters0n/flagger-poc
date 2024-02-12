@@ -1,1 +1,3 @@
-Everything under this directory is monitored by fluxcd and kept in sync
+This is a non-live version of the flux-monitored data/deployments.
+
+Copy files to flux-live to have flux monitor them
