@@ -77,6 +77,35 @@ resource "helm_release" "istiod" {
   depends_on = [ helm_release.istio-base ]
 }
 
+# No terraform provider  for this:
+resource "kubernetes_manifest" "istio_gateway" {
+  provider = kubernetes
+
+  manifest = {
+    "apiVersion" = "networking.istio.io/v1alpha3"
+    "kind"       = "Gateway"
+    "metadata" = {
+      "name"      = "public-gateway"
+      "namespace" = "istio-system"
+    }
+    "spec" = {
+      "selector" = {
+        "istio" = "ingressgateway"
+      }
+      "servers" = [
+        {
+          "port" = {
+            "number"   = 80
+            "name"     = "http"
+            "protocol" = "HTTP"
+          }
+          "hosts" = ["*"]
+        }
+      ]
+    }
+  }
+}
+
 #resource "helm_release" "ingress-gateway" {
 #  name = "ingress-gateway"
 #  namespace = kubernetes_namespace.this.metadata.0.name

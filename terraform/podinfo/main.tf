@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "this" {
       }
       spec {
         container {
-          image = "ghcr.io/stefanprodan/podinfo:6.0.0"
+          image = "ghcr.io/stefanprodan/podinfo:6.0.2"
           name  = local.app_name
           command = [ "./podinfo", "--port=9898", "--port-metrics=9797", "--grpc-port=9999", "--grpc-service-name=podinfo", "--level=info", "--random-delay=false", "--random-error=false" ]
 
@@ -139,14 +139,18 @@ resource "kubernetes_service" "this" {
   metadata {
     name      = local.app_name
     namespace = kubernetes_namespace.this.metadata.0.name
+    annotations = {
+      "helm.toolkit.fluxcd.io/driftDetection" = "disabled"
+      "kustomize.toolkit.fluxcd.io/reconcile" = "disabled"
+    }
   }
   spec {
     selector = {
-      "app" = local.app_name
+      "app" = "${local.app_name}-primary"
     }
     port {
-      name        = "http-podinfo"
-      port        = 8080
+      name        = "http"
+      port        = 9898
       target_port = 9898
     }
 

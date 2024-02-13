@@ -4,7 +4,7 @@
 # From https://github.com/fluxcd/flagger//kustomize/tester?ref=main
 #
 locals {
-  app_name = "tester"
+  app_name = "flagger-loadtester"
   app_team = "devops"
   env      = "dev"
 

@@ -66,13 +66,13 @@ spec:
     webhooks:
       - name: acceptance-test
         type: pre-rollout
-        url: http://flagger-loadtester.test/
+        url: http://flagger-loadtester.podinfo/
         timeout: 30s
         metadata:
           type: bash
           cmd: "curl -sd 'test' http://podinfo-canary:9898/token | grep token"
       - name: load-test
-        url: http://flagger-loadtester.test/
+        url: http://flagger-loadtester.podinfo/
         timeout: 5s
         metadata:
-          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.test:9898/"
+          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.podinfo:9898/"
