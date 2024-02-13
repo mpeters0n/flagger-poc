@@ -18,11 +18,11 @@ spec:
     kind: HorizontalPodAutoscaler
     name: podinfo
   service:
-    name: podinfo
+    name: podinfo-lb
     # service port number
-    port: 9898
+    port: 8080
     # container port number or name (optional)
-    targetPort: 9898
+#    targetPort: 9898
     # Istio gateways (optional)
 #    gateways:
 #    - public-gateway.istio-system.svc.cluster.local
