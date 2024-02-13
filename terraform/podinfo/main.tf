@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "this" {
       }
       spec {
         container {
-          image = "ghcr.io/stefanprodan/podinfo:6.0.1"
+          image = "ghcr.io/stefanprodan/podinfo:6.0.0"
           name  = local.app_name
           command = [ "./podinfo", "--port=9898", "--port-metrics=9797", "--grpc-port=9999", "--grpc-service-name=podinfo", "--level=info", "--random-delay=false", "--random-error=false" ]
 

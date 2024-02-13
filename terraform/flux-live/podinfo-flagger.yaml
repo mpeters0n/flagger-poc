@@ -35,18 +35,18 @@ spec:
         # use ISTIO_MUTUAL when mTLS is enabled
 #        mode: DISABLE
     # Istio retry policy (optional)
-    retries:
-      attempts: 3
-      perTryTimeout: 1s
-      retryOn: "gateway-error,connect-failure,refused-stream"
+#    retries:
+#      attempts: 3
+#      perTryTimeout: 1s
+#      retryOn: "gateway-error,connect-failure,refused-stream"
   analysis:
     # schedule interval (default 60s)
-    interval: 1m
+    interval: 30s 
     # max number of failed metric checks before rollback
     threshold: 5
     # max traffic percentage routed to canary
     # percentage (0-100)
-    maxWeight: 50
+    maxWeight: 60
     # canary increment step
     # percentage (0-100)
     stepWeight: 10
