@@ -18,27 +18,26 @@ spec:
     kind: HorizontalPodAutoscaler
     name: podinfo
   service:
-    name: podinfo
     # service port number
     port: 9898
     # container port number or name (optional)
     targetPort: 9898
     # Istio gateways (optional)
-#    gateways:
-#    - public-gateway.istio-system.svc.cluster.local
+    gateways:
+    - public-gateway.istio-system.svc.cluster.local
     # Istio virtual service host names (optional)
-#    hosts:
-#    - 172.19.255.201
+    hosts:
+    - 172.19.255.201
     # Istio traffic policy (optional)
-#    trafficPolicy:
-#      tls:
+    trafficPolicy:
+      tls:
         # use ISTIO_MUTUAL when mTLS is enabled
-#        mode: DISABLE
+        mode: DISABLE
     # Istio retry policy (optional)
-#    retries:
-#      attempts: 3
-#      perTryTimeout: 1s
-#      retryOn: "gateway-error,connect-failure,refused-stream"
+    retries:
+      attempts: 3
+      perTryTimeout: 1s
+      retryOn: "gateway-error,connect-failure,refused-stream"
   analysis:
     # schedule interval (default 60s)
     interval: 30s 

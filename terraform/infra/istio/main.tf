@@ -77,51 +77,29 @@ resource "helm_release" "istiod" {
   depends_on = [ helm_release.istio-base ]
 }
 
-# No terraform provider  for this:
-resource "kubernetes_manifest" "istio_gateway" {
-  provider = kubernetes
+resource "helm_release" "ingress-gateway" {
+  name = "ingress-gateway"
+  namespace = kubernetes_namespace.this.metadata.0.name
+  repository = "https://istio-release.storage.googleapis.com/charts"
+  chart = "gateway"
+  version = local.istio_chart_version
 
-  manifest = {
-    "apiVersion" = "networking.istio.io/v1alpha3"
-    "kind"       = "Gateway"
-    "metadata" = {
-      "name"      = "public-gateway"
-      "namespace" = "istio-system"
-    }
-    "spec" = {
-      "selector" = {
-        "istio" = "ingressgateway"
-      }
-      "servers" = [
-        {
-          "port" = {
-            "number"   = 80
-            "name"     = "http"
-            "protocol" = "HTTP"
-          }
-          "hosts" = ["*"]
-        }
-      ]
-    }
-  }
+  values = [ templatefile("${path.module}/ingress-gateway-values.yaml.tpl",
+    {
+      annotations = indent(2, "  ${yamlencode(local.owner_annotations)}")
+      labels      = indent(2, "  ${yamlencode(local.owner_labels)}")
+    })
+  ]
+
+  depends_on = [ helm_release.istiod ]
 }
 
-#resource "helm_release" "ingress-gateway" {
-#  name = "ingress-gateway"
-#  namespace = kubernetes_namespace.this.metadata.0.name
-#  repository = "https://istio-release.storage.googleapis.com/charts"
-#  chart = "gateway"
-#  version = local.istio_chart_version
-#
-#  values = [ templatefile("${path.module}/ingress-gateway-values.yaml.tpl",
-#    {
-#      annotations = indent(2, "  ${yamlencode(local.owner_annotations)}")
-#      labels      = indent(2, "  ${yamlencode(local.owner_labels)}")
-#    })
-#  ]
-#
-#  depends_on = [ helm_release.istiod ]
-#}
+# No terraform provider  for this:
+resource "kubernetes_manifest" "istio_gateway" {
+  manifest = yamldecode(templatefile("${path.module}/gateway.yaml", {
+    namespace = kubernetes_namespace.this.metadata.0.name
+  }))
+}
 
 resource "helm_release" "kiali" {
   name = "kiali"

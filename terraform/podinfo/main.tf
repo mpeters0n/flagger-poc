@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "this" {
       }
       spec {
         container {
-          image = "ghcr.io/stefanprodan/podinfo:6.0.0"
+          image = "ghcr.io/stefanprodan/podinfo:6.0.2"
           name  = local.app_name
           command = [ "./podinfo", "--port=9898", "--port-metrics=9797", "--grpc-port=9999", "--grpc-service-name=podinfo", "--level=info", "--random-delay=false", "--random-error=false" ]
 
@@ -137,7 +137,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "this" {
 
 resource "kubernetes_service" "this" {
   metadata {
-    name      = "${local.app_name}-lb"
+    name      = "${local.app_name}"
     namespace = kubernetes_namespace.this.metadata.0.name
   }
   spec {
@@ -147,9 +147,53 @@ resource "kubernetes_service" "this" {
     port {
       name        = "http"
       port        = 8080
-      target_port = 9898
     }
 
-    type = "LoadBalancer"
+    type = "ClusterIP"
+#    type = "LoadBalancer"
   }
 }
+
+resource "kubernetes_manifest" "virtual_service" {
+  manifest = yamldecode(templatefile("${path.module}/virtual-service.yaml", {
+    namespace = kubernetes_namespace.this.metadata.0.name
+    app_name = local.app_name
+  }))
+}
+
+#resource "kubernetes_manifest" "destination_rule" {
+#  manifest = yamldecode(templatefile("${path.module}/destination-rule.yaml", {
+#    namespace = kubernetes_namespace.this.metadata.0.name
+#    app_name = local.app_name
+#  }))
+#}
+
+#resource "kubernetes_ingress_v1" "this" {
+#  metadata {
+#    name = "${local.app_name}-ingress"
+#    namespace = kubernetes_namespace.this.metadata.0.name
+#    annotations = {
+#      "kubernetes.io/ingress.class" = "istio"
+#    }
+#  }
+#  spec {
+#    rule {
+#      # Whitelist accepted endpoints 
+#      http {
+#        path {
+#          path = "/"
+#          backend {
+#            service {
+#              name = kubernetes_service.this.metadata[0].name
+#              port {
+#                number = 8080
+#              }
+#            }
+#          }
+#        }
+#      }
+#    }
+#  }
+#
+#  depends_on = [ kubernetes_service.this ]
+#}
