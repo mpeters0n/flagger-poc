@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# Steps to create a complete k8s cluster
+# ready for flagger testing
+#
+
+#
+# Create kind cluster
+#
+kind create cluster --config=/home/mpeterson/kind.config
+
+#
+# Install LoadBalancer support for nginx-ingress
+#
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml &&
+
+# Wait for the install to complete...
+until kubectl wait --namespace metallb-system \
+                --for=condition=ready pod \
+                --selector=app=metallb \
+                --timeout=90s 
+do
+    echo "Waiting for metallb install to complete..."
+    sleep 2
+done
+
+kubectl apply -f ./metallb-conf.yaml
+
+#
+# Install nginx-ingress
+#
+terraform apply -auto-approve
+
+#
+# Install flagger and prometheus
+#
+helm upgrade -i flagger flagger/flagger \
+--namespace ingress-nginx \
+--set prometheus.install=true \
+--set meshProvider=nginx
+
+exit 0
