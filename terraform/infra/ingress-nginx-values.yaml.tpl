@@ -818,9 +818,9 @@ controller:
     # if this port is changed, change healthz-port: in extraArgs: accordingly
     enabled: true
     service:
-      annotations: {}
-      # prometheus.io/scrape: "true"
-      # prometheus.io/port: "10254"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
       # -- Labels to be added to the metrics service resource
       labels: {}
       # clusterIP: ""
