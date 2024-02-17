@@ -41,6 +41,10 @@ resource "kubernetes_deployment" "this" {
           "app.kubernetes.io/name" = local.app_name
           "app" = local.app_name
         }
+        annotations = {
+          "prometheus.io/scrape" = "true"
+          "prometheus.io/port"   = "9898"
+        }
       }
       spec {
         container {
